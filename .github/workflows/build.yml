@@ -45,9 +45,9 @@ jobs:
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v${{ steps.get_version.outputs.version }}
-        name: Release v${{ steps.get_version.outputs.version }}
-        body: "Automated release of Clearlag v${{ steps.get_version.outputs.version }}."
+        tag_name: v${{ steps.get_version.outputs.version }}-build-${{ github.run_number }}
+        name: Release v${{ steps.get_version.outputs.version }} (Build #${{ github.run_number }})
+        body: "Automated build release for Clearlag v${{ steps.get_version.outputs.version }} (Commit: ${{ github.sha }})."
         draft: false
         prerelease: false
         files: build/libs/*.jar
