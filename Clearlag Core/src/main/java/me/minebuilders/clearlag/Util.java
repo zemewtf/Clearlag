@@ -97,14 +97,30 @@ public class Util {
     }
 
     public static String getRawBukkitVersion() {
-        return Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+        String name = Bukkit.getServer().getClass().getPackage().getName();
+        String[] parts = name.split("\\.");
+        if (parts.length > 3) {
+            return parts[3];
+        }
+        return "";
     }
 
     public static String getBukkitVersion() {
-
-        String[] v = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3].split("-")[0].split("_");
-
-        return v[0].replace("v", "") + "." + v[1];
+        try {
+            String versionStr = Bukkit.getBukkitVersion().split("-")[0];
+            String[] parts = versionStr.split("\\.");
+            if (parts.length >= 2) {
+                return parts[0] + "." + parts[1];
+            }
+            return versionStr;
+        } catch (Throwable t) {
+            try {
+                String[] v = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3].split("-")[0].split("_");
+                return v[0].replace("v", "") + "." + v[1];
+            } catch (Throwable ignored) {
+                return "1.21";
+            }
+        }
     }
 
     public static Date parseTime(String time) {
