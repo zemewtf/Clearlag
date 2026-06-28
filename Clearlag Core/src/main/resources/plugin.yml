@@ -1,5 +1,5 @@
 name: ClearLag
-author: bob7l
+authors: ["bob7l", "zeme"]
 description: Clear your lagg!
 main: me.minebuilders.clearlag.Clearlag
 version: 3.2.3
