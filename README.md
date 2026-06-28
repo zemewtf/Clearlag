@@ -1,6 +1,2 @@
-
-Clearlag's an extremely old plugin that has somehow survived since 2011. Much of the code is probably outdated or inefficient due to API/internal changes of Spigot from other the years. 
-
-**Modules**
-- Clearlag Legacy: For Spigot/Bukkit builds before 1.8
-- Clearlag Core: For 1.8+
+This is my updated version of the currently unmaintainted Clearlag plugin, I have added folia support, and a few features.
+Feel free to use this version, or commit to this repository and correct my mistakes.
