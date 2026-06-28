@@ -64,7 +64,7 @@ public class AttributeParser {
                 attribute = new EntityOnGroundAttribute();
             else if (tok.startsWith("id=") || tok.startsWith("material=")) {
 
-                if (t == EntityType.ITEM) {
+                if (t == me.minebuilders.clearlag.SchedulerUtil.ITEM_TYPE) {
 
                     String input = tok.substring(3);
                     Material mat = null;

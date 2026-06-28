@@ -11,6 +11,21 @@ public class SchedulerUtil {
 
     public static final boolean IS_FOLIA = isFoliaPresent();
 
+    public static final org.bukkit.entity.EntityType ITEM_TYPE = getEntityType("ITEM", "DROPPED_ITEM");
+    public static final org.bukkit.entity.EntityType TNT_TYPE = getEntityType("TNT", "PRIMED_TNT");
+
+    private static org.bukkit.entity.EntityType getEntityType(String modernName, String legacyName) {
+        try {
+            return org.bukkit.entity.EntityType.valueOf(modernName);
+        } catch (IllegalArgumentException e) {
+            try {
+                return org.bukkit.entity.EntityType.valueOf(legacyName);
+            } catch (IllegalArgumentException ex) {
+                return null;
+            }
+        }
+    }
+
     private static boolean isFoliaPresent() {
         try {
             Class.forName("io.papermc.paper.threadedregions.RegionizedServer");

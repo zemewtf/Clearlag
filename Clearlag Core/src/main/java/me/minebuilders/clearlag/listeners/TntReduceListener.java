@@ -22,13 +22,14 @@ public class TntReduceListener extends EventModule {
 
         Entity e = event.getEntity();
 
-        if (e.getType() == EntityType.TNT) {
+        org.bukkit.entity.EntityType tntType = me.minebuilders.clearlag.SchedulerUtil.TNT_TYPE;
+        if (tntType != null && e.getType() == tntType) {
 
             int counter = 0;
 
             for (Entity tnt : e.getNearbyEntities(checkRadius, checkRadius, checkRadius)) {
 
-                if (tnt.getType() == EntityType.TNT)
+                if (tntType != null && tnt.getType() == tntType)
 
                     if (counter > maxPrimed)
                         tnt.remove();

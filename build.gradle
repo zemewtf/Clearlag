@@ -9,6 +9,14 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(25)
     }
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+configurations.compileClasspath {
+    attributes {
+        attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 25)
+    }
 }
 
 repositories {
