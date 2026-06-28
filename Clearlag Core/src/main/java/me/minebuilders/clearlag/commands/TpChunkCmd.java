@@ -39,16 +39,14 @@ public class TpChunkCmd extends CommandModule {
         if (!Util.isInteger(args[0]) || !Util.isInteger(args[1]))
             throw new WrongCommandArgumentException(lang.getMessage("invalidinteger"), (Util.isInteger(args[0]) ? args[1] : args[0]));
 
-        final Chunk chunk = world.getChunkAt(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
+        final int chunkX = Integer.parseInt(args[0]);
+        final int chunkZ = Integer.parseInt(args[1]);
 
-        final Block b = chunk.getBlock(8, 0, 8);
+        final int x = chunkX * 16 + 8;
+        final int z = chunkZ * 16 + 8;
 
-        final int x = b.getX();
-        final int y = b.getY();
-        final int z = b.getZ();
+        player.teleport(new Location(world, x, world.getHighestBlockYAt(x, z), z));
 
-        player.teleport(new Location(world, x, world.getHighestBlockYAt(new Location(world, x, y, z)), z));
-
-        lang.sendMessage("teleported", player, chunk.getX(), chunk.getZ());
+        lang.sendMessage("teleported", player, chunkX, chunkZ);
     }
 }

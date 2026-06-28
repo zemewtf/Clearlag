@@ -39,3 +39,7 @@ sourceSets {
 processResources {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:deprecation"
+}

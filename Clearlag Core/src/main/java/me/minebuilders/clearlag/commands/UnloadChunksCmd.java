@@ -19,6 +19,11 @@ public class UnloadChunksCmd extends CommandModule {
     @Override
     protected void run(CommandSender sender, String[] args) {
 
+        if (me.minebuilders.clearlag.SchedulerUtil.IS_FOLIA) {
+            sender.sendMessage(ChatColor.RED + "This command is not supported on Folia regionalized servers.");
+            return;
+        }
+
         sender.sendMessage(ChatColor.RED + "This command is not recommended in versions above 1.8. If you are having trouble with chunks, use chunk-gc in the bukkit.yml file.");
 
         int chunkcount = 0;

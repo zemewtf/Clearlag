@@ -140,7 +140,7 @@ public class Clearlag extends JavaPlugin {
 
             try {
 
-                final VersionAdapter tryingVersionAdapter = versionAdapterType.newInstance();
+                final VersionAdapter tryingVersionAdapter = versionAdapterType.getDeclaredConstructor().newInstance();
 
                 if (tryingVersionAdapter.isCompatible())
                     return tryingVersionAdapter;

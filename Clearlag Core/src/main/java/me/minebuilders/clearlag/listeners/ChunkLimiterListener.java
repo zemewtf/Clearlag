@@ -12,6 +12,15 @@ import org.bukkit.event.world.ChunkLoadEvent;
 @ConfigPath(path = "chunk-limiter")
 public class ChunkLimiterListener extends EventModule {
 
+    @Override
+    public void setEnabled() {
+        if (me.minebuilders.clearlag.SchedulerUtil.IS_FOLIA) {
+            me.minebuilders.clearlag.Util.warning("chunk-limiter is not compatible with Folia regionalized multithreading and has been disabled.");
+            return;
+        }
+        super.setEnabled();
+    }
+
     @ConfigValue
     private int limit;
 

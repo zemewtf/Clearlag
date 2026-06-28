@@ -55,7 +55,7 @@ public abstract class StatRenderer extends MapRenderer implements Runnable {
     @Override
     public void run() {
 
-        if (!observer.isOnline() || observer.getItemInHand() == null || !versionAdapter.isMapItemStackEqual(observer.getItemInHand(), mapItemStack)) {
+        if (!observer.isOnline() || observer.getInventory().getItemInMainHand() == null || !versionAdapter.isMapItemStackEqual(observer.getInventory().getItemInMainHand(), mapItemStack)) {
 
             cancel();
 

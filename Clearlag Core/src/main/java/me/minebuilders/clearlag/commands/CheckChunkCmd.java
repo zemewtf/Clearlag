@@ -24,39 +24,41 @@ public class CheckChunkCmd extends CommandModule {
     @Override
     protected void run(Player sender, String[] args) {
 
-        final Chunk c = sender.getLocation().getChunk();
+        me.minebuilders.clearlag.SchedulerUtil.runEntity(sender, () -> {
+            final Chunk c = sender.getLocation().getChunk();
 
-        final Map<Class<?>, Integer> tileEntityCountMap = new IdentityHashMap<>(100);
+            final Map<Class<?>, Integer> tileEntityCountMap = new IdentityHashMap<>(100);
 
-        final Map<EntityType, Integer> entityCountMap = new IdentityHashMap<>(100);
-
-
-        for (BlockState bt : c.getTileEntities())
-            tileEntityCountMap.merge(bt.getClass(), 1, Integer::sum);
+            final Map<EntityType, Integer> entityCountMap = new IdentityHashMap<>(100);
 
 
-        for (Entity e : c.getEntities()) {
-
-            final EntityType type = e.getType();
-
-            entityCountMap.merge(type, 1, Integer::sum);
-        }
-
-        lang.sendMessage("header", sender);
-
-        lang.sendMessage("tilelist", sender);
-
-        for (Map.Entry<Class<?>, Integer> tileEntry : tileEntityCountMap.entrySet())
-            lineMessage.sendMessage(sender, tileEntry.getValue(), tileEntry.getKey().getSimpleName().replace("Craft", ""));
+            for (BlockState bt : c.getTileEntities())
+                tileEntityCountMap.merge(bt.getClass(), 1, Integer::sum);
 
 
-        lang.sendMessage("entitylist", sender);
+            for (Entity e : c.getEntities()) {
 
-        for (Map.Entry<EntityType, Integer> entityEntry : entityCountMap.entrySet())
-            lineMessage.sendMessage(sender, entityEntry.getValue(), entityEntry.getKey().name().toLowerCase().replace("_", " "));
+                final EntityType type = e.getType();
+
+                entityCountMap.merge(type, 1, Integer::sum);
+            }
+
+            lang.sendMessage("header", sender);
+
+            lang.sendMessage("tilelist", sender);
+
+            for (Map.Entry<Class<?>, Integer> tileEntry : tileEntityCountMap.entrySet())
+                lineMessage.sendMessage(sender, tileEntry.getValue(), tileEntry.getKey().getSimpleName().replace("Craft", ""));
 
 
-        lang.sendMessage("footer", sender);
+            lang.sendMessage("entitylist", sender);
+
+            for (Map.Entry<EntityType, Integer> entityEntry : entityCountMap.entrySet())
+                lineMessage.sendMessage(sender, entityEntry.getValue(), entityEntry.getKey().name().toLowerCase().replace("_", " "));
+
+
+            lang.sendMessage("footer", sender);
+        });
     }
 
 }

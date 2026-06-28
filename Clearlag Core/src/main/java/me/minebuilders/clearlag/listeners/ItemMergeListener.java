@@ -3,13 +3,11 @@ package me.minebuilders.clearlag.listeners;
 import me.minebuilders.clearlag.annotations.ConfigPath;
 import me.minebuilders.clearlag.annotations.ConfigValue;
 import me.minebuilders.clearlag.modules.EventModule;
-import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
 
 @ConfigPath(path = "item-merger")
 public class ItemMergeListener extends EventModule {
@@ -21,23 +19,23 @@ public class ItemMergeListener extends EventModule {
     @EventHandler
     public void onItemDrop(ItemSpawnEvent event) {
 
-        ItemStack i = event.getEntity().getItemStack();
-        Material type = i.getType();
+        Item itemEntity = event.getEntity();
+        ItemStack i = itemEntity.getItemStack();
         int c = i.getAmount();
-        MaterialData data = i.getData();
 
-        for (Entity entity : event.getEntity().getNearbyEntities(radius, radius, radius)) {
+        for (Entity entity : itemEntity.getNearbyEntities(radius, radius, radius)) {
 
             if (entity instanceof Item && !entity.isDead()) {
 
-                ItemStack ni = ((Item) entity).getItemStack();
+                Item otherItem = (Item) entity;
+                ItemStack ni = otherItem.getItemStack();
 
-                if (!entity.isDead() && type == ni.getType() && data.equals(ni.getData()) && i.getDurability() == ni.getDurability()
-                        && i.getMaxStackSize() >= (ni.getAmount() + c)) {
+                if (i.isSimilar(ni) && i.getMaxStackSize() >= (ni.getAmount() + c)) {
 
                     entity.remove();
 
                     i.setAmount(ni.getAmount() + c);
+                    itemEntity.setItemStack(i);
 
                     return;
                 }
