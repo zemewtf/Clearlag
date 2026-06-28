@@ -93,7 +93,7 @@ public class TickSamplerCmd extends CommandModule {
 
         private final AtomicInteger tick = new AtomicInteger();
 
-        private final BukkitRunnable tickWatcher;
+        private final me.minebuilders.clearlag.SchedulerUtil.TaskRef tickWatcherRef;
 
         public TimingThread(Thread watchingThread, Callback<Collection<Integer>> callback, int sampleTickCycles) {
             this.watchingThread = watchingThread;
@@ -101,15 +101,16 @@ public class TickSamplerCmd extends CommandModule {
             this.sampleTickCycles = ++sampleTickCycles;
             this.fullTickTimings = new ArrayList<>(sampleTickCycles);
 
-            tickWatcher = new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    tick.incrementAndGet();
-                }
-            };
-
-            tickWatcher.runTaskTimer(Clearlag.getInstance(), 0L, 0L);
+            tickWatcherRef = me.minebuilders.clearlag.SchedulerUtil.scheduleRepeatingGlobal(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        tick.incrementAndGet();
+                    }
+                },
+                0L,
+                1L
+            );
         }
 
         @Override
@@ -141,7 +142,9 @@ public class TickSamplerCmd extends CommandModule {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } finally {
-                tickWatcher.cancel();
+                if (tickWatcherRef != null) {
+                    tickWatcherRef.cancel();
+                }
             }
         }
     }

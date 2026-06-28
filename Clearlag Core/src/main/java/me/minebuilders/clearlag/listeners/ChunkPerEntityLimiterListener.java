@@ -25,7 +25,7 @@ public class ChunkPerEntityLimiterListener extends EventModule {
     @ConfigValue(valueType = ConfigValueType.ENTITY_LIMIT_MAP)
     private EntityMap<Integer> entityLimits;
 
-    private BukkitTask passivePurger = null;
+    private me.minebuilders.clearlag.SchedulerUtil.TaskRef passivePurger = null;
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onChunkLoad(ChunkLoadEvent event) {
@@ -117,7 +117,15 @@ public class ChunkPerEntityLimiterListener extends EventModule {
 
                     for (; chunkIndex < chunks.length && processedChunks < chunkBatchSize; ++chunkIndex) {
 
-                        purgeEntities(chunks[chunkIndex].getEntities());
+                        final Chunk chunk = chunks[chunkIndex];
+                        int cx = chunk.getX();
+                        int cz = chunk.getZ();
+                        final World finalWorld = world;
+                        me.minebuilders.clearlag.SchedulerUtil.runRegion(world, cx, cz, () -> {
+                            if (chunk.isLoaded()) {
+                                purgeEntities(chunk.getEntities());
+                            }
+                        });
 
                         ++processedChunks;
                     }
@@ -142,10 +150,15 @@ public class ChunkPerEntityLimiterListener extends EventModule {
     public void setEnabled() {
         super.setEnabled();
 
-        if (Clearlag.getInstance().getConfig().getBoolean("per-entity-chunk-entity-limiter.passive-cleaner.passive-cleaning-enabled"))
-            passivePurger = new PassivePurger(Clearlag.getInstance().getConfig().getInt("per-entity-chunk-entity-limiter.passive-cleaner.chunk-batch-size")).runTaskTimer(Clearlag.getInstance(),
-                    Clearlag.getInstance().getConfig().getInt("per-entity-chunk-entity-limiter.passive-cleaner.check-interval"),
-                    Clearlag.getInstance().getConfig().getInt("per-entity-chunk-entity-limiter.passive-cleaner.check-interval"));
+        if (Clearlag.getInstance().getConfig().getBoolean("per-entity-chunk-entity-limiter.passive-cleaner.passive-cleaning-enabled")) {
+            long checkInterval = Clearlag.getInstance().getConfig().getInt("per-entity-chunk-entity-limiter.passive-cleaner.check-interval");
+            int batchSize = Clearlag.getInstance().getConfig().getInt("per-entity-chunk-entity-limiter.passive-cleaner.chunk-batch-size");
+            passivePurger = me.minebuilders.clearlag.SchedulerUtil.scheduleRepeatingGlobal(
+                    new PassivePurger(batchSize),
+                    checkInterval,
+                    checkInterval
+            );
+        }
     }
 
     @Override

@@ -58,11 +58,13 @@ public class AttributeParser {
                 attribute = new EntityLifeLimitAttribute(Integer.parseInt(tok.substring(9)));
             else if (tok.startsWith("isMounted"))
                 attribute = new EntityMountedAttribute();
+            else if (tok.startsWith("hasPassenger"))
+                attribute = new EntityHasPassengerAttribute();
             else if (tok.startsWith("onGround"))
                 attribute = new EntityOnGroundAttribute();
             else if (tok.startsWith("id=") || tok.startsWith("material=")) {
 
-                if (t == EntityType.DROPPED_ITEM) {
+                if (t == EntityType.ITEM) {
 
                     String input = tok.substring(3);
                     Material mat = null;

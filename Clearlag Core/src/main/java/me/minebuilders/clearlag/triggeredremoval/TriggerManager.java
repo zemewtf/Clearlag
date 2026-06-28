@@ -30,7 +30,7 @@ public class TriggerManager extends ClearlagModule {
     @AutoWire
     private ConfigHandler configHandler;
 
-    private final Map<CleanerTrigger, BukkitTask> tirggerTaskMap = new HashMap<>(2);
+    private final Map<CleanerTrigger, me.minebuilders.clearlag.SchedulerUtil.TaskRef> tirggerTaskMap = new HashMap<>(2);
 
     @Override
     public void setEnabled() {
@@ -124,14 +124,16 @@ public class TriggerManager extends ClearlagModule {
                     }
                 }
 
-                final BukkitTask runnableTask = new BukkitRunnable() {
-
-                    @Override
-                    public void run() {
-                        trigger.runTrigger();
-                    }
-
-                }.runTaskTimer(Clearlag.getInstance(), trigger.getCheckFrequency(), trigger.getCheckFrequency());
+                final me.minebuilders.clearlag.SchedulerUtil.TaskRef runnableTask = me.minebuilders.clearlag.SchedulerUtil.scheduleRepeatingGlobal(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            trigger.runTrigger();
+                        }
+                    },
+                    trigger.getCheckFrequency(),
+                    trigger.getCheckFrequency()
+                );
 
                 tirggerTaskMap.put(trigger, runnableTask);
             }
@@ -142,7 +144,7 @@ public class TriggerManager extends ClearlagModule {
     public void setDisabled() {
         super.setDisabled();
 
-        for (BukkitTask task : tirggerTaskMap.values())
+        for (me.minebuilders.clearlag.SchedulerUtil.TaskRef task : tirggerTaskMap.values())
             task.cancel();
 
         tirggerTaskMap.clear();

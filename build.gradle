@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+}
+
+group = 'me.minebuilders'
+version = '3.2.2'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url = 'https://repo.papermc.io/repository/maven-public/'
+    }
+    maven {
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    }
+}
+
+dependencies {
+    compileOnly 'io.papermc.paper:paper-api:26.1.2.build.72-stable'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['Clearlag Core/src/main/java']
+        }
+        resources {
+            srcDirs = ['Clearlag Core/src/main/resources']
+        }
+    }
+}
+
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}

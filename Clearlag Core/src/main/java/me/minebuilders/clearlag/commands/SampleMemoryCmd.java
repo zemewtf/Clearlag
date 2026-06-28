@@ -37,8 +37,7 @@ public class SampleMemoryCmd extends CommandModule {
 
         lang.sendMessage("begin", sender, args[0]);
 
-        //Todo: Replace this pointless code with new Java 8 features...
-        new MemorySamlier(Integer.parseInt(args[0]) * 20, (s) -> {
+        MemorySamlier sampler = new MemorySamlier(Integer.parseInt(args[0]) * 20, (s) -> {
 
             int validMemorySamples = 0;
 
@@ -120,10 +119,18 @@ public class SampleMemoryCmd extends CommandModule {
             }
 
 
-        }).runTaskTimer(Clearlag.getInstance(), 1L, 1L);
+        });
+        me.minebuilders.clearlag.SchedulerUtil.TaskRef taskRef = me.minebuilders.clearlag.SchedulerUtil.scheduleRepeatingGlobal(sampler, 1L, 1L);
+        sampler.setTaskRef(taskRef);
     }
 
-    private static class MemorySamlier extends BukkitRunnable {
+    private static class MemorySamlier implements Runnable {
+
+        private me.minebuilders.clearlag.SchedulerUtil.TaskRef taskRef;
+
+        public void setTaskRef(me.minebuilders.clearlag.SchedulerUtil.TaskRef taskRef) {
+            this.taskRef = taskRef;
+        }
 
         private int currentTick = 0;
 
@@ -171,7 +178,9 @@ public class SampleMemoryCmd extends CommandModule {
             lastMemoryUsed = RAMUtil.getUsedMemory();
 
             if (++currentTick > runTicks) {
-                cancel();
+                if (taskRef != null) {
+                    taskRef.cancel();
+                }
                 callback.call(this);
             }
         }

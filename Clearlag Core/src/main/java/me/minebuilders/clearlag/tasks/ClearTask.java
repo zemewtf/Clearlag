@@ -49,8 +49,13 @@ public class ClearTask extends TaskModule {
 
         if (interval >= autoremovalInterval) {
 
-            if (broadcastRemoval)
-                broadcastHandler.broadcast(Util.cloneAndReplaceStringArr(broadcastMessage, "+RemoveAmount", String.valueOf(entityManager.removeEntities(autoClear))));
+            if (broadcastRemoval) {
+                entityManager.removeEntities(autoClear, (removed) -> {
+                    broadcastHandler.broadcast(Util.cloneAndReplaceStringArr(broadcastMessage, "+RemoveAmount", String.valueOf(removed)));
+                });
+            } else {
+                entityManager.removeEntities(autoClear, (removed) -> {});
+            }
 
             interval = 0;
         }

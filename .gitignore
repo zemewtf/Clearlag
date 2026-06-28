@@ -35,3 +35,8 @@
 
 # Windows Filesystem Dust
 Thumbs.db
+
+# Gradle
+.gradle/
+.gradle-bin/
+/build/

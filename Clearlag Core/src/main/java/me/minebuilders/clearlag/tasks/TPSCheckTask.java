@@ -82,8 +82,8 @@ public class TPSCheckTask extends TaskModule {
     }
 
     @Override
-    protected int startTask() {
-        return Bukkit.getScheduler().scheduleSyncRepeatingTask(Clearlag.getInstance(), this, 420, getInterval());
+    protected me.minebuilders.clearlag.SchedulerUtil.TaskRef startTaskRef() {
+        return me.minebuilders.clearlag.SchedulerUtil.scheduleRepeatingGlobal(this, 420, getInterval());
     }
 
 }

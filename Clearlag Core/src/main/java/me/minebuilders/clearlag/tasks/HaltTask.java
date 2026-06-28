@@ -59,7 +59,7 @@ public class HaltTask extends ClearlagModule implements Listener {
                         return true;
                     }
 
-                });
+                }, (removed) -> {});
             }
 
             if (disableNaturalEntitySpawning) {

@@ -31,15 +31,15 @@ public class ClearCmd extends CommandModule {
     @Override
     protected void run(CommandSender sender, String[] args) {
 
-        final int i = entityManager.removeEntities(cmdClear);
+        entityManager.removeEntities(cmdClear, (i) -> {
+            if (configHandler.getConfig().getBoolean("command-remove.broadcast-removal")) {
 
-        if (configHandler.getConfig().getBoolean("command-remove.broadcast-removal")) {
+                broadcastHandler.broadcast(configHandler.getConfig().getString("auto-removal.broadcast-message").replace("+RemoveAmount", "" + i));
 
-            broadcastHandler.broadcast(configHandler.getConfig().getString("auto-removal.broadcast-message").replace("+RemoveAmount", "" + i));
-
-        } else {
-            clearMessage.sendMessage(sender, i);
-        }
+            } else {
+                clearMessage.sendMessage(sender, i);
+            }
+        });
     }
 
 }

@@ -45,8 +45,9 @@ public class LogPurger extends TaskModule {
     }
 
     @Override
-    public int startTask() {
-        return Bukkit.getScheduler().runTaskLaterAsynchronously(Clearlag.getInstance(), this, 0L).getTaskId();
+    public me.minebuilders.clearlag.SchedulerUtil.TaskRef startTaskRef() {
+        me.minebuilders.clearlag.SchedulerUtil.runAsync(this);
+        return null;
     }
 
 }

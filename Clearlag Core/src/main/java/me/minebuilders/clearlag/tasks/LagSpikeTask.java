@@ -138,24 +138,24 @@ public class LagSpikeTask extends TaskModule {
         tickGarbageCollectorTimeTotal.set(getTotalGCCompleteTime());
     }
 
-    protected int startTask() {
+    @Override
+    public me.minebuilders.clearlag.SchedulerUtil.TaskRef startTaskRef() {
 
         timer = new Timer(true);
 
         timer.scheduleAtFixedRate(new ThreadWatcherTask(), 50, configHandler.getConfig().getLong("lag-spike-helper.check-interval"));
 
-        return Bukkit.getScheduler().runTaskTimer(Clearlag.getInstance(), this, getInterval(), getInterval()).getTaskId();
+        return me.minebuilders.clearlag.SchedulerUtil.scheduleRepeatingGlobal(this, getInterval(), getInterval());
     }
 
     @Override
     public void setDisabled() {
         super.setDisabled();
 
-        Bukkit.getScheduler().cancelTask(taskid);
-
-        timer.cancel();
-
-        timer = null;
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
     }
 
     public int getInterval() {

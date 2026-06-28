@@ -1,9 +1,9 @@
 package me.minebuilders.clearlag;
 
 import org.bukkit.Bukkit;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -39,25 +39,25 @@ public class BukkitUpdater implements Runnable {
 
         final String bukkitversion = Util.getBukkitVersion();
 
-        final JSONArray array = (JSONArray) JSONValue.parse(response);
+        final JsonArray array = JsonParser.parseString(response).getAsJsonArray();
 
-        JSONObject line = null;
+        JsonObject line = null;
 
         boolean isLegacy = bukkitversion.contains("1.7");
 
         for (int i = array.size() - 1; i > 17; i--) {
 
-            line = ((JSONObject) array.get(i));
+            line = array.get(i).getAsJsonObject();
 
-            final String ver = (String) line.get("gameVersion");
+            final String ver = line.get("gameVersion").getAsString();
 
             if (ver.contains(bukkitversion) || (!isLegacy && !ver.contains("1.7"))) {
                 break;
             }
         }
 
-        this.newversion = line.get("name").toString();
-        this.download = (String) line.get("downloadUrl");
+        this.newversion = line.get("name").getAsString();
+        this.download = line.get("downloadUrl").getAsString();
 
         return (versionToInt(Clearlag.getInstance().getDescription().getVersion()) < versionToInt(newversion));
     }

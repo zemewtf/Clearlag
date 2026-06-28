@@ -29,9 +29,9 @@ public class EntityCleanerJob extends ClearModule {
     public void setEnabled() {
         super.setEnabled();
 
-        entityManager.removeEntities(this);
-
-        setDisabled();
+        entityManager.removeEntities(this, (removed) -> {
+            setDisabled();
+        });
     }
 
     @Override

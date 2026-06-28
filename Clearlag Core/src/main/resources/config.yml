@@ -29,6 +29,7 @@ global-broadcasts:
   async: false
   use-permission-for-broadcasts: false
   permission: bukkit.broadcast
+  use-actionbar: false
 
 #Monitors your server's main thread for locking/freezing. Helps figure out what's causing lag-spikes
 # NOTE: This will outprint mostly just stacktraces. It's up to YOU to interpret the stacktrace

@@ -35,7 +35,7 @@ public class TPSTask extends TaskModule {
     }
 
     @Override
-    protected int startTask() {
+    protected me.minebuilders.clearlag.SchedulerUtil.TaskRef startTaskRef() {
 
         elapsedTicks = 0;
 
@@ -43,13 +43,21 @@ public class TPSTask extends TaskModule {
 
             try {
 
-                tpsCalculator = new InternalTPSYoinker();
+                Bukkit.getTPS();
+                tpsCalculator = new PaperTPSYoinker();
 
-            } catch (Exception e) {
+            } catch (Throwable e) {
 
-                Util.warning("Clearlag failed to use the internal TPS tracker during initialization. Reverted to estimation... (" + e.getMessage() + ")");
+                try {
 
-                tpsCalculator = new EstimatedTPSCalculator();
+                    tpsCalculator = new InternalTPSYoinker();
+
+                } catch (Exception ex) {
+
+                    Util.warning("Clearlag failed to use the internal TPS tracker during initialization. Reverted to estimation... (" + ex.getMessage() + ")");
+
+                    tpsCalculator = new EstimatedTPSCalculator();
+                }
             }
 
         } else {
@@ -57,7 +65,7 @@ public class TPSTask extends TaskModule {
         }
 
 
-        return Bukkit.getScheduler().scheduleSyncRepeatingTask(Clearlag.getInstance(), this, 120L, getInterval());
+        return me.minebuilders.clearlag.SchedulerUtil.scheduleRepeatingGlobal(this, 120L, getInterval());
     }
 
     public double getTPS() {
@@ -164,6 +172,20 @@ public class TPSTask extends TaskModule {
         @Override
         public double calculateCurrentAverageTPS() {
             return tps;
+        }
+    }
+
+    private class PaperTPSYoinker implements TPSCalculator {
+        @Override
+        public void tick() {}
+
+        @Override
+        public double calculateCurrentAverageTPS() {
+            try {
+                return Bukkit.getTPS()[0];
+            } catch (Throwable t) {
+                return 20.0;
+            }
         }
     }
 

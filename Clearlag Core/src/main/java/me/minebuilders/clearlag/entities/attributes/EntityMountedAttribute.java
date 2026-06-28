@@ -9,7 +9,8 @@ public class EntityMountedAttribute extends EntityAttribute<Entity> {
 
     @Override
     public boolean containsData(Entity entity) {
-        return (reversed == entity.isEmpty());
+        boolean isMounted = (entity.getVehicle() != null) || !entity.isEmpty() || (entity.getPassengers() != null && !entity.getPassengers().isEmpty());
+        return (reversed != isMounted);
     }
 
 }

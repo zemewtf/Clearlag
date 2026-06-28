@@ -118,7 +118,7 @@ public class ProfileCmd extends CommandModule {
             throw new WrongCommandArgumentException(lang.getMessage("invalidprofiler"), args[1], sb.toString());
         }
 
-        profileSession.runTaskLater(Clearlag.getInstance(), Integer.parseInt(args[0]) * 20L);
+        profileSession.runTaskLater(Integer.parseInt(args[0]) * 20L);
 
         Bukkit.getPluginManager().registerEvents(profileSession, Clearlag.getInstance());
 
@@ -151,7 +151,7 @@ public class ProfileCmd extends CommandModule {
     }
 
 
-    private static abstract class ProfileSession extends BukkitRunnable implements Listener {
+    private static abstract class ProfileSession implements Runnable, Listener {
 
         final Map<ChunkKey, MutableInt> chunkMap = new HashMap<>();
 
@@ -159,6 +159,10 @@ public class ProfileCmd extends CommandModule {
 
         public ProfileSession(Callback<Map<ChunkKey, MutableInt>> callback) {
             this.callback = callback;
+        }
+
+        public void runTaskLater(long delay) {
+            me.minebuilders.clearlag.SchedulerUtil.runGlobalLater(this, delay);
         }
 
         @Override
@@ -173,13 +177,15 @@ public class ProfileCmd extends CommandModule {
 
             final ChunkKey key = new ChunkKey(chunk);
 
-            MutableInt count = chunkMap.get(key);
+            synchronized (chunkMap) {
+                MutableInt count = chunkMap.get(key);
 
-            if (count == null) {
-                count = new MutableInt(1);
-                chunkMap.put(key, count);
-            } else
-                count.increment();
+                if (count == null) {
+                    count = new MutableInt(1);
+                    chunkMap.put(key, count);
+                } else
+                    count.increment();
+            }
         }
     }
 

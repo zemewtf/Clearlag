@@ -1,6 +1,7 @@
 package me.minebuilders.clearlag.commands;
 
 import me.minebuilders.clearlag.annotations.AutoWire;
+import me.minebuilders.clearlag.SchedulerUtil;
 import me.minebuilders.clearlag.annotations.ConfigModule;
 import me.minebuilders.clearlag.exceptions.WrongCommandArgumentException;
 import me.minebuilders.clearlag.language.LanguageValue;
@@ -32,9 +33,11 @@ public class AreaCmd extends CommandModule {
 
             final int radius = Integer.parseInt(args[0]);
 
-            final int removed = entityManager.removeEntities(areaClear.getRemovables(player.getNearbyEntities(radius, radius, radius), player.getWorld()), player.getWorld());
+            SchedulerUtil.runEntity(player, () -> {
+                final int removed = entityManager.removeEntities(areaClear.getRemovables(player.getNearbyEntities(radius, radius, radius), player.getWorld()), player.getWorld());
 
-            lang.sendMessage("message", player, removed, radius);
+                lang.sendMessage("message", player, removed, radius);
+            });
 
         } catch (NumberFormatException e) {
             throw new WrongCommandArgumentException(lang.getMessage("error"));

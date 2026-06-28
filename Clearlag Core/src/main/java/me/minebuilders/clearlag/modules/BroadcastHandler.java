@@ -24,6 +24,9 @@ public class BroadcastHandler extends ClearlagModule {
     @ConfigValue
     private boolean async;
 
+    @ConfigValue
+    private boolean useActionbar;
+
     private Broadcaster broadcaster = new DefaultBroadcaster();
 
     public void broadcast(String message) {
@@ -63,7 +66,20 @@ public class BroadcastHandler extends ClearlagModule {
         @Override
         public void broadcast(String[] message) {
 
-            if (usePermissionForBroadcasts) {
+            if (useActionbar) {
+
+                for (Player p : Bukkit.getOnlinePlayers()) {
+
+                    for (String str : message) {
+                        try {
+                            p.spigot().sendMessage(net.md_5.bungee.api.ChatMessageType.ACTION_BAR, net.md_5.bungee.api.chat.TextComponent.fromLegacyText(str));
+                        } catch (Throwable t) {
+                            p.sendMessage(str);
+                        }
+                    }
+                }
+
+            } else if (usePermissionForBroadcasts) {
 
                 for (String str : message)
                     Bukkit.broadcast(str, permission);

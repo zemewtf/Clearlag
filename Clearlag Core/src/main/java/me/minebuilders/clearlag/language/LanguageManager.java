@@ -39,19 +39,42 @@ public class LanguageManager extends ClearlagModule {
 
         languageLoader = new LanguageLoader(broadcastHandler);
 
-        try {
+        // Copy default lang files to data folder
+        java.io.File languagesFolder = new java.io.File(Clearlag.getInstance().getDataFolder(), "languages");
+        if (!languagesFolder.exists()) {
+            languagesFolder.mkdirs();
+        }
 
-            languageLoader.setLanguageMap(Clearlag.class.getResource("/languages/" + desiredLanguage).openStream());
+        String[] langFiles = {
+            "English.lang", "BrazilianPortuguese.lang", "ChineseSimplified.lang", 
+            "ChineseTraditional.lang", "Czech.lang", "French.lang", "German.lang", 
+            "Japanese.lang", "Korean.lang", "Polish.lang", "Russian.lang", "Spanish.lang"
+        };
 
-        } catch (Exception e) {
-
-            Util.warning("Clearlag FAILED to find your desired language file '" + desiredLanguage + "'. Defaulting to English...");
-
-            try {
-                languageLoader.setLanguageMap(Clearlag.class.getResource("/languages/English.lang").openStream());
-            } catch (Exception ex) {
-                ex.printStackTrace();
+        for (String file : langFiles) {
+            java.io.File outFile = new java.io.File(languagesFolder, file);
+            if (!outFile.exists()) {
+                try (java.io.InputStream in = Clearlag.class.getResourceAsStream("/languages/" + file)) {
+                    if (in != null) {
+                        java.nio.file.Files.copy(in, outFile.toPath());
+                    }
+                } catch (Exception e) {
+                    Util.warning("Failed to save language file: " + file);
+                }
             }
+        }
+
+        // Load the language file from data folder first, falling back to JAR
+        java.io.File langFile = new java.io.File(languagesFolder, desiredLanguage);
+        if (langFile.exists()) {
+            try {
+                languageLoader.setLanguageMap(new java.io.FileInputStream(langFile));
+            } catch (Exception e) {
+                Util.warning("Failed to load language from file " + desiredLanguage + ", trying JAR resource...");
+                loadFromJar(desiredLanguage);
+            }
+        } else {
+            loadFromJar(desiredLanguage);
         }
 
         for (Object object : Clearlag.getInstance().getAutoWirer().getWires()) {
@@ -60,6 +83,19 @@ public class LanguageManager extends ClearlagModule {
                 languageLoader.wireInMessages(object);
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    private void loadFromJar(String desiredLanguage) {
+        try {
+            languageLoader.setLanguageMap(Clearlag.class.getResource("/languages/" + desiredLanguage).openStream());
+        } catch (Exception e) {
+            Util.warning("Clearlag FAILED to find your desired language file '" + desiredLanguage + "'. Defaulting to English...");
+            try {
+                languageLoader.setLanguageMap(Clearlag.class.getResource("/languages/English.lang").openStream());
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
         }
     }
